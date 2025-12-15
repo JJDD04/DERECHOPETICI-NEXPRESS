@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Generador de Derecho de Petición - Colombia</title>
+  <title>Generador de Derecho de Petición – Colombia</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -13,7 +13,7 @@
     .container {
       max-width: 800px;
       margin: auto;
-      background: white;
+      background: #ffffff;
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -30,6 +30,7 @@
       width: 100%;
       padding: 8px;
       margin-top: 5px;
+      font-size: 14px;
     }
     button {
       margin-top: 20px;
@@ -45,6 +46,11 @@
     button:hover {
       background: #0d47a1;
     }
+    .nota {
+      margin-top: 15px;
+      font-size: 13px;
+      color: #555;
+    }
   </style>
 </head>
 <body>
@@ -53,66 +59,40 @@
   <h1>Generador de Derecho de Petición</h1>
 
   <label>Nombre completo</label>
-  <input id="nombre">
+  <input id="nombre" placeholder="Ej: Natalia Ramírez Gómez">
 
   <label>Cédula</label>
-  <input id="cedula">
+  <input id="cedula" placeholder="Solo números">
 
   <label>Ciudad</label>
-  <input id="ciudad">
+  <input id="ciudad" placeholder="Ej: Bogotá D.C.">
 
   <label>Entidad (EPS, banco, etc.)</label>
-  <input id="entidad">
+  <input id="entidad" placeholder="Ej: EPS Sanitas">
 
-  <label>Describe el problema</label>
+  <label>Describe el problema (sé claro y concreto)</label>
   <textarea id="caso" rows="6"></textarea>
 
   <label>Correo para notificaciones</label>
-  <input id="correo">
+  <input id="correo" placeholder="correo@ejemplo.com">
 
   <button onclick="generar()">Generar Derecho de Petición</button>
+
+  <p class="nota">
+    El documento generado es un borrador. Se recomienda revisión ortográfica antes de su presentación.
+    Esta herramienta no envía correos ni almacena información.
+  </p>
 </div>
 
 <script>
-function generar() {
-  const nombre = document.getElementById("nombre").value;
-  const cedula = document.getElementById("cedula").value;
-  const ciudad = document.getElementById("ciudad").value;
-  const entidad = document.getElementById("entidad").value;
-  const caso = document.getElementById("caso").value;
-  const correo = document.getElementById("correo").value;
-  const fecha = new Date().toLocaleDateString("es-CO");
-
-  const contenido = `
-  <h2>DERECHO DE PETICIÓN</h2>
-  <p>${fecha}</p>
-  <p>Señores:<br><b>${entidad}</b></p>
-
-  <p>Yo, <b>${nombre}</b>, identificado(a) con cédula ${cedula}, domiciliado(a) en ${ciudad},
-  actuando en ejercicio del derecho consagrado en el artículo 23 de la Constitución Política
-  de Colombia y la Ley 1755 de 2015, presento el siguiente derecho de petición:</p>
-
-  <p>${caso}</p>
-
-  <p>Solicito que la respuesta sea enviada al correo: ${correo}</p>
-
-  <p>Atentamente,</p>
-  <p><b>${nombre}</b><br>C.C. ${cedula}</p>
-  `;
-
-  const blob = new Blob(
-    [`<html><body>${contenido}</body></html>`],
-    { type: "application/msword" }
-  );
-
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "Derecho_de_Peticion.doc";
-  a.click();
-  URL.revokeObjectURL(url);
+function limpiarTexto(texto) {
+  return texto
+    .trim()
+    .replace(/\s+/g, ' ')
+    .replace(/^\w/, c => c.toUpperCase());
 }
-</script>
 
-</body>
-</html>
+function generar() {
+  const nombre = limpiarTexto(document.getElementById("nombre").value);
+  const cedula = document.getElementById("cedula").value.trim();
+  const ciudad = limpiarTexto(
