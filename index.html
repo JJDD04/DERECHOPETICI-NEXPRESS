@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Generador de Derecho de Petición – Colombia</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -53,6 +54,7 @@
     }
   </style>
 </head>
+
 <body>
 
 <div class="container">
@@ -79,20 +81,39 @@
   <button onclick="generar()">Generar Derecho de Petición</button>
 
   <p class="nota">
-    El documento generado es un borrador. Se recomienda revisión ortográfica antes de su presentación.
+    El documento generado es un borrador. Se recomienda revisión antes de su presentación.
     Esta herramienta no envía correos ni almacena información.
   </p>
 </div>
 
 <script>
+/* Limpieza básica de texto */
 function limpiarTexto(texto) {
-  return texto
+  texto = texto
     .trim()
-    .replace(/\s+/g, ' ')
-    .replace(/^\w/, c => c.toUpperCase());
+    .replace(/\s+/g, ' ');
+
+  // Mayúscula al inicio y después de punto
+  texto = texto.replace(/(^\w|\.\s+\w)/g, letra => letra.toUpperCase());
+
+  return texto;
 }
 
 function generar() {
-  const nombre = limpiarTexto(document.getElementById("nombre").value);
-  const cedula = document.getElementById("cedula").value.trim();
-  const ciudad = limpiarTexto(
+  const nombre  = limpiarTexto(document.getElementById("nombre").value);
+  const cedula  = document.getElementById("cedula").value.trim();
+  const ciudad  = limpiarTexto(document.getElementById("ciudad").value);
+  const entidad = limpiarTexto(document.getElementById("entidad").value);
+  const caso    = limpiarTexto(document.getElementById("caso").value);
+  const correo  = document.getElementById("correo").value.trim();
+  const fecha   = new Date().toLocaleDateString("es-CO");
+
+  const contenido = `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+
+<h2 style="text-align:center;">DERECHO DE
