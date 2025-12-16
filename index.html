@@ -60,6 +60,7 @@ button {
 
 <form id="formulario">
 
+
 <!-- ================= PANTALLA 1 ================= -->
 <div id="pantalla1">
 
@@ -75,14 +76,49 @@ button {
   <label>Entidad a la que va dirigido</label>
   <input type="text" name="entidad" required>
 
-  <label>Describe el problema</label>
-  <textarea name="caso" required></textarea>
+  <label>
+    Describe tu problema
+    <span style="font-size:12px; font-weight:normal; color:#555;">
+      (Sé muy descriptivo y directo. Usa fechas, nombres y datos importantes)
+    </span>
+  </label>
+
+  <textarea name="caso" rows="6" required
+    placeholder="Ejemplo:
+El día 12 de marzo de 2024 presenté una solicitud ante la entidad.
+Hasta la fecha no he recibido respuesta.
+Esta situación me ha generado preocupación y afectación económica.">
+  </textarea>
+
+  <div class="box">
+    <p style="font-size:14px; margin-bottom:5px;"><b>Para ayudarte, puedes responder:</b></p>
+    <ul style="font-size:13px; padding-left:18px;">
+      <li>¿Qué pasó exactamente?</li>
+      <li>¿Cuándo ocurrió? (fechas)</li>
+      <li>¿Quiénes están involucrados?</li>
+      <li>¿Qué has hecho para solucionarlo?</li>
+      <li>¿Cómo te ha afectado esta situación?</li>
+    </ul>
+  </div>
+
+  <label>¿Qué respuesta esperas de la entidad? (opcional)</label>
+  <textarea name="respuesta_esperada" rows="3"
+    placeholder="Ejemplo:
+Que se me entregue una respuesta clara por escrito y se resuelva mi solicitud.">
+  </textarea>
+
+  <label>¿Cómo te ha hecho sentir esta situación? (opcional)</label>
+  <textarea name="impacto_emocional" rows="3"
+    placeholder="Ejemplo:
+Esta situación me ha generado estrés, incertidumbre y preocupación.">
+  </textarea>
 
   <label>Correo electrónico</label>
   <input type="email" name="correo" required>
 
   <button type="button" onclick="irAPago()">Continuar al pago</button>
 </div>
+
 
 <!-- ================= PANTALLA 2 ================= -->
 <div id="pantalla2" class="hidden">
