@@ -14,7 +14,7 @@ body {
 .container {
   max-width: 700px;
   margin: auto;
-  background: #fff;
+  background: #ffffff;
   padding: 20px;
   border-radius: 8px;
 }
@@ -33,7 +33,7 @@ button {
   padding: 12px;
   width: 100%;
   background: #1976d2;
-  color: #fff;
+  color: white;
   border: none;
   border-radius: 5px;
   font-size: 16px;
@@ -51,7 +51,7 @@ button {
 <div class="container">
 <h2>Derecho de Petición</h2>
 
-<form id="formulario">
+<form id="formulario" novalidate>
 
 <label>Nombre completo</label>
 <input name="nombre" required>
@@ -96,37 +96,46 @@ document.getElementById("formulario").addEventListener("submit", async function(
   e.preventDefault();
 
   const estado = document.getElementById("estado");
-  estado.innerText = "Generando documento...";
+  estado.innerText = "⏳ Generando documento...";
 
-  const response = await fetch("PEGA_AQUI_LA_URL_DE_TU_APPS_SCRIPT", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      nombre: this.nombre.value,
-      cedula: this.cedula.value,
-      ciudad: this.ciudad.value,
-      entidad: this.entidad.value,
-      caso: this.caso.value,
-      correo: this.correo.value,
-      link_comprobante: this.link_comprobante.value
-    })
-  });
+  try {
+    const response = await fetch(
+      "https://script.google.com/macros/s/AKfycbw4KZe9iZ4un20Me2njIw8t_s5cnTK4xNqPzqfZYxst6WDtETojFNkfuzHUfSvXyK4Jrw/exec",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nombre: this.nombre.value,
+          cedula: this.cedula.value,
+          ciudad: this.ciudad.value,
+          entidad: this.entidad.value,
+          caso: this.caso.value,
+          correo: this.correo.value,
+          link_comprobante: this.link_comprobante.value
+        })
+      }
+    );
 
-  const blob = await response.blob();
-  const url = window.URL.createObjectURL(blob);
+    if (!response.ok) throw new Error("Error en el servidor");
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "Derecho_de_Peticion.docx";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
 
-  estado.innerText = "Documento generado y descargado correctamente.";
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Derecho_de_Peticion.docx";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    estado.innerText = "✅ Documento generado y descargado correctamente.";
+  } catch (error) {
+    estado.innerText = "❌ Error al generar el documento.";
+    console.error(error);
+  }
 });
 </script>
 
 </body>
 </html>
-
 
