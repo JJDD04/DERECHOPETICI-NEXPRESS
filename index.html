@@ -1,65 +1,66 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Generador de Derecho de Petición – Colombia</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Derecho de Petición – Pago con comprobante</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
-      padding: 20px;
-    }
-    .container {
-      max-width: 800px;
-      margin: auto;
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    h1 {
-      text-align: center;
-    }
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 15px;
-    }
-    input, textarea {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      font-size: 14px;
-    }
-    button {
-      margin-top: 20px;
-      padding: 12px;
-      width: 100%;
-      background: #1976d2;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #0d47a1;
-    }
-    .nota {
-      margin-top: 15px;
-      font-size: 13px;
-      color: #555;
-    }
-  </style>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+  padding: 20px;
+}
+.container {
+  max-width: 800px;
+  margin: auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+}
+label {
+  font-weight: bold;
+  margin-top: 15px;
+  display: block;
+}
+input, textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+}
+button {
+  margin-top: 20px;
+  padding: 12px;
+  width: 100%;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.btn-next { background:#1976d2; color:#fff; }
+.btn-generate { background:#2e7d32; color:#fff; }
+.hidden { display:none; }
+.locked {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.box {
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin-top: 20px;
+  border-radius: 6px;
+  background:#fafafa;
+}
+</style>
 </head>
 
 <body>
 
 <div class="container">
-  <h1>Generador de Derecho de Petición</h1>
+<h1>Derecho de Petición</h1>
 
+<!-- PANTALLA 1 -->
+<div id="pantalla1">
   <label>Nombre completo</label>
   <input id="nombre">
 
@@ -69,105 +70,133 @@
   <label>Ciudad</label>
   <input id="ciudad">
 
-  <label>Entidad (EPS, banco, etc.)</label>
+  <label>Entidad</label>
   <input id="entidad">
 
   <label>Describe el problema</label>
-  <textarea id="caso" rows="6"></textarea>
+  <textarea id="caso" rows="5"></textarea>
 
-  <label>Correo para notificaciones</label>
+  <label>Correo electrónico</label>
   <input id="correo">
 
-  <button type="button" id="btnGenerar">Generar Derecho de Petición</button>
+  <button class="btn-next" type="button" onclick="irAPago()">
+    Continuar al pago
+  </button>
+</div>
 
-  <p class="nota">
-    El documento generado es un borrador. Se recomienda revisión antes de su presentación.
-    Esta herramienta no envía correos ni almacena información.
-  </p>
+<!-- PANTALLA 2 -->
+<div id="pantalla2" class="hidden">
+
+  <div class="box">
+    <h3>Realiza el pago</h3>
+
+    <p><b>💜 Nequi</b><br>
+    Número: <b>300 123 4567</b><br>
+    Titular: <b>Natalia</b></p>
+
+    <p><b>🏦 Bancolombia</b><br>
+    Cuenta de ahorros: <b>12345678901</b><br>
+    Titular: <b>Natalia</b></p>
+
+    <p><b>Valor:</b> $40.000 COP</p>
+  </div>
+
+  <div class="box">
+    <label>Sube el comprobante de pago</label>
+    <input type="file" id="comprobante" accept=".jpg,.png,.pdf"
+           onchange="habilitarGenerar()">
+
+    <button id="btnGenerar" class="btn-generate locked"
+      type="button" onclick="generarDocumento()">
+      Generar derecho de petición
+    </button>
+
+    <p style="font-size:13px;color:#555;">
+      El documento se genera una vez cargado el comprobante.
+      La revisión final se realiza tras verificación manual.
+    </p>
+  </div>
+
+</div>
+
 </div>
 
 <script>
-function limpiarTexto(texto) {
-  if (!texto) return "";
-  texto = texto.trim().replace(/\s+/g, " ");
-  texto = texto.replace(/(^\w|\.\s+\w)/g, l => l.toUpperCase());
-  return texto;
+function irAPago() {
+  const campos = ["nombre","cedula","entidad","caso"];
+  for (let id of campos) {
+    if (!document.getElementById(id).value.trim()) {
+      alert("Completa todos los campos antes de continuar.");
+      return;
+    }
+  }
+  document.getElementById("pantalla1").classList.add("hidden");
+  document.getElementById("pantalla2").classList.remove("hidden");
 }
 
-document.getElementById("btnGenerar").addEventListener("click", generar);
+function habilitarGenerar() {
+  const archivo = document.getElementById("comprobante").files.length;
+  const btn = document.getElementById("btnGenerar");
+  if (archivo > 0) {
+    btn.classList.remove("locked");
+  }
+}
 
-function generar() {
-  const nombre  = limpiarTexto(document.getElementById("nombre").value);
-  const cedula  = document.getElementById("cedula").value.trim();
-  const ciudad  = limpiarTexto(document.getElementById("ciudad").value);
-  const entidad = limpiarTexto(document.getElementById("entidad").value);
-  const caso    = limpiarTexto(document.getElementById("caso").value);
-  const correo  = document.getElementById("correo").value.trim();
-  const fecha   = new Date().toLocaleDateString("es-CO");
+function limpiar(t) {
+  return t.trim().replace(/\s+/g," ");
+}
 
-  if (!nombre || !cedula || !entidad || !caso) {
-    alert("Por favor completa los campos obligatorios.");
+function generarDocumento() {
+  if (document.getElementById("comprobante").files.length === 0) {
+    alert("Debes subir el comprobante de pago.");
     return;
   }
+
+  const nombre = limpiar(nombreEl.value);
+  const cedula = cedulaEl.value;
+  const ciudad = limpiar(ciudadEl.value);
+  const entidad = limpiar(entidadEl.value);
+  const caso = limpiar(casoEl.value);
+  const correo = correoEl.value;
+  const fecha = new Date().toLocaleDateString("es-CO");
 
   const html = `
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-</head>
+<meta charset="UTF-8">
 <body>
-
-<h2 style="text-align:center;">DERECHO DE PETICIÓN</h2>
-
+<h2>DERECHO DE PETICIÓN</h2>
 <p>${fecha}</p>
-
 <p>Señores:<br><b>${entidad}</b></p>
-
 <p>
-Yo, <b>${nombre}</b>, identificado(a) con cédula de ciudadanía No. ${cedula},
-domiciliado(a) en la ciudad de ${ciudad}, actuando en ejercicio del derecho
-consagrado en el <b>artículo 23 de la Constitución Política de Colombia</b> y de
-conformidad con la <b>Ley 1755 de 2015</b>, presento el siguiente derecho de petición:
+Yo, <b>${nombre}</b>, identificado(a) con cédula ${cedula},
+domiciliado(a) en ${ciudad}, en ejercicio del artículo 23
+de la Constitución Política y la Ley 1755 de 2015,
+presento el siguiente derecho de petición:
 </p>
-
 <p>${caso}</p>
-
-<p>
-Solicito respetuosamente que la respuesta sea enviada al correo electrónico:
-<b>${correo}</b>, dentro de los términos legales.
-</p>
-
-<p>Atentamente,</p>
-
-<p>
-<b>${nombre}</b><br>
-C.C. No. ${cedula}
-</p>
-
+<p>Solicito respuesta al correo: <b>${correo}</b></p>
+<p>Atentamente,<br><b>${nombre}</b><br>C.C. ${cedula}</p>
 </body>
-</html>
-`;
+</html>`;
 
-  const blob = new Blob(
-    [html],
-    { type: "application/msword;charset=utf-8" }
-  );
-
-  const url = URL.createObjectURL(blob);
-
+  const blob = new Blob([html], {type:"application/msword;charset=utf-8"});
   const a = document.createElement("a");
-  a.href = url;
+  a.href = URL.createObjectURL(blob);
   a.download = "Derecho_de_Peticion.doc";
   document.body.appendChild(a);
   a.click();
-
-  setTimeout(() => {
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }, 0);
+  document.body.removeChild(a);
 }
+const nombreEl = document.getElementById("nombre");
+const cedulaEl = document.getElementById("cedula");
+const ciudadEl = document.getElementById("ciudad");
+const entidadEl = document.getElementById("entidad");
+const casoEl = document.getElementById("caso");
+const correoEl = document.getElementById("correo");
 </script>
 
 </body>
 </html>
+
+
