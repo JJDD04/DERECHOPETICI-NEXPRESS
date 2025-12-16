@@ -51,3 +51,38 @@ const btnPago = document.getElementById("btnPago");
 const pantalla1 = document.getElementById("pantalla1");
 const pantalla2 = document.getElementById("pantalla2");
 const estado = document.getElementById("estado");
+
+/* 🔥 PRUEBA 2: BOTÓN FUNCIONA */
+btnPago.addEventListener("click", function () {
+  alert("➡️ Click en Ir a pago detectado");
+  pantalla1.classList.add("hidden");
+  pantalla2.classList.remove("hidden");
+});
+
+/* 🔥 PRUEBA 3: SUBMIT FUNCIONA */
+document.getElementById("formulario").addEventListener("submit", function(e) {
+  e.preventDefault();
+  alert("📨 Submit detectado");
+
+  estado.innerText = "Enviando...";
+
+  emailjs.sendForm(
+    "service_a16hrta",
+    "template_m8d80fi",
+    this
+  ).then(
+    function() {
+      estado.innerText = "✅ Enviado correctamente";
+      alert("✅ EmailJS respondió OK");
+    },
+    function(error) {
+      estado.innerText = "❌ Error";
+      alert("❌ Error EmailJS (ver consola)");
+      console.error(error);
+    }
+  );
+});
+</script>
+
+</body>
+</html>
