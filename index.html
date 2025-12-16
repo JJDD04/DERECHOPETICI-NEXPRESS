@@ -60,7 +60,6 @@ button {
 
 <form id="formulario">
 
-
 <!-- ================= PANTALLA 1 ================= -->
 <div id="pantalla1">
 
@@ -76,49 +75,14 @@ button {
   <label>Entidad a la que va dirigido</label>
   <input type="text" name="entidad" required>
 
-  <label>
-    Describe tu problema
-    <span style="font-size:12px; font-weight:normal; color:#555;">
-      (Sé muy descriptivo y directo. Usa fechas, nombres y datos importantes)
-    </span>
-  </label>
-
-  <textarea name="caso" rows="6" required
-    placeholder="Ejemplo:
-El día 12 de marzo de 2024 presenté una solicitud ante la entidad.
-Hasta la fecha no he recibido respuesta.
-Esta situación me ha generado preocupación y afectación económica.">
-  </textarea>
-
-  <div class="box">
-    <p style="font-size:14px; margin-bottom:5px;"><b>Para ayudarte, puedes responder:</b></p>
-    <ul style="font-size:13px; padding-left:18px;">
-      <li>¿Qué pasó exactamente?</li>
-      <li>¿Cuándo ocurrió? (fechas)</li>
-      <li>¿Quiénes están involucrados?</li>
-      <li>¿Qué has hecho para solucionarlo?</li>
-      <li>¿Cómo te ha afectado esta situación?</li>
-    </ul>
-  </div>
-
-  <label>¿Qué respuesta esperas de la entidad? (opcional)</label>
-  <textarea name="respuesta_esperada" rows="3"
-    placeholder="Ejemplo:
-Que se me entregue una respuesta clara por escrito y se resuelva mi solicitud.">
-  </textarea>
-
-  <label>¿Cómo te ha hecho sentir esta situación? (opcional)</label>
-  <textarea name="impacto_emocional" rows="3"
-    placeholder="Ejemplo:
-Esta situación me ha generado estrés, incertidumbre y preocupación.">
-  </textarea>
+  <label>Describe tu problema</label>
+  <textarea name="caso" rows="6" required></textarea>
 
   <label>Correo electrónico</label>
   <input type="email" name="correo" required>
 
   <button type="button" onclick="irAPago()">Continuar al pago</button>
 </div>
-
 
 <!-- ================= PANTALLA 2 ================= -->
 <div id="pantalla2" class="hidden">
@@ -134,15 +98,20 @@ Esta situación me ha generado estrés, incertidumbre y preocupación.">
     <p><b>🏦 Bancolombia</b></p>
     <p>
       Nombre del titular: <b>JUAN JOSE DAZA</b><br>
-      Cédula: <b>1014868216<br>
-      Cuenta de ahorros: <b>AHORROS-BANCOLOMBIA: 944-692959-01</b>
+      Cédula: <b>1014868216</b><br>
+      Cuenta de ahorros: <b>944-692959-01</b>
     </p>
   </div>
 
+  <!-- ✅ INPUT FILE CORRECTO -->
   <label>Sube el comprobante de pago</label>
-  <<input type="file" name="comprobante" accept=".jpg,.png,.pdf" required
-onchange="validarArchivo(this)">
->
+  <input
+    type="file"
+    name="comprobante"
+    accept=".jpg,.png,.pdf"
+    required
+    onchange="validarArchivo(this)"
+  >
 
   <button type="submit">Enviar comprobante</button>
 
@@ -153,17 +122,35 @@ onchange="validarArchivo(this)">
 </div>
 
 <script>
-/* 🔐 EMAILJS – DATOS YA CONFIGURADOS */
+/* 🔐 EMAILJS */
 emailjs.init("jvc-7-lDgJoYTiYQj");
 
+const estado = document.getElementById("estado");
+
+/* Cambiar de pantalla */
 function irAPago() {
   document.getElementById("pantalla1").classList.add("hidden");
   document.getElementById("pantalla2").classList.remove("hidden");
 }
 
+/* ✅ VALIDACIÓN DEL ARCHIVO */
+function validarArchivo(input) {
+  const archivo = input.files[0];
+  if (!archivo) return;
+
+  const maxSize = 2 * 1024 * 1024; // 2 MB
+
+  if (archivo.size > maxSize) {
+    alert("❌ El archivo es muy grande. Máximo permitido: 2 MB.");
+    input.value = "";
+  }
+}
+
+/* Envío del formulario */
 document.getElementById("formulario").addEventListener("submit", function(e) {
   e.preventDefault();
-  estado.innerText = "Enviando comprobante...";
+
+  estado.innerText = "⏳ Enviando comprobante...";
 
   emailjs.sendForm(
     "service_a16hrta",
@@ -175,21 +162,9 @@ document.getElementById("formulario").addEventListener("submit", function(e) {
     },
     function(error) {
       estado.innerText = "❌ Error al enviar. Intenta nuevamente.";
-      console.log(error);
+      console.error(error);
     }
-  )
-  function validarArchivo(input) {
-  const archivo = input.files[0];
-  if (!archivo) return;
-
-  const maxSize = 2 * 1024 * 1024; // 2 MB
-
-  if (archivo.size > maxSize) {
-    alert("❌ El archivo es muy grande. Máximo permitido: 2 MB. Usa una foto comprimida o un PDF ligero.");
-    input.value = "";
-  }
-}
-
+  );
 });
 </script>
 
