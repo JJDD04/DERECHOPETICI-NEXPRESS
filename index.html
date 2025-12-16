@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Derecho de Petición – Envío de comprobante</title>
+<title>Derecho de Petición – Pago y Comprobante</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
@@ -14,7 +14,7 @@ body {
   padding: 20px;
 }
 .container {
-  max-width: 700px;
+  max-width: 720px;
   margin: auto;
   background: #ffffff;
   padding: 20px;
@@ -44,6 +44,12 @@ button {
 .hidden {
   display: none;
 }
+.box {
+  background:#f7f7f7;
+  padding:15px;
+  border-radius:6px;
+  margin-top:10px;
+}
 </style>
 </head>
 
@@ -54,8 +60,9 @@ button {
 
 <form id="formulario">
 
-<!-- PANTALLA 1 -->
+<!-- ================= PANTALLA 1 ================= -->
 <div id="pantalla1">
+
   <label>Nombre completo</label>
   <input type="text" name="nombre" required>
 
@@ -65,7 +72,7 @@ button {
   <label>Ciudad</label>
   <input type="text" name="ciudad">
 
-  <label>Entidad</label>
+  <label>Entidad a la que va dirigido</label>
   <input type="text" name="entidad" required>
 
   <label>Describe el problema</label>
@@ -77,13 +84,24 @@ button {
   <button type="button" onclick="irAPago()">Continuar al pago</button>
 </div>
 
-<!-- PANTALLA 2 -->
+<!-- ================= PANTALLA 2 ================= -->
 <div id="pantalla2" class="hidden">
-  <p><b>Realiza el pago:</b></p>
-  <p>
-    💜 Nequi: <b>3001234567</b><br>
-    🏦 Bancolombia: <b>12345678901</b>
-  </p>
+
+  <h3>Pago del servicio</h3>
+
+  <div class="box">
+    <p><b>💜 Nequi</b></p>
+    <p>Número: <b>3102201651</b></p>
+  </div>
+
+  <div class="box">
+    <p><b>🏦 Bancolombia</b></p>
+    <p>
+      Nombre del titular: <b>JUAN JOSE DAZA</b><br>
+      Cédula: <b>1014868216b><br>
+      Cuenta de ahorros: <b>AHORROS-BANCOLOMBIA: 944-692959-01</b>
+    </p>
+  </div>
 
   <label>Sube el comprobante de pago</label>
   <input type="file" name="comprobante" accept=".jpg,.png,.pdf" required>
@@ -97,7 +115,7 @@ button {
 </div>
 
 <script>
-/* 🔴 CAMBIA SOLO ESTAS 3 LÍNEAS POR LAS TUYAS */
+/* 🔐 EMAILJS – DATOS YA CONFIGURADOS */
 emailjs.init("jvc-7-lDgJoYTiYQj");
 
 function irAPago() {
@@ -115,10 +133,10 @@ document.getElementById("formulario").addEventListener("submit", function(e) {
     this
   ).then(
     function() {
-      estado.innerText = "✅ Comprobante enviado correctamente. Te contactaremos pronto.";
+      estado.innerText = "✅ Comprobante enviado correctamente. Estamos validando tu pago.";
     },
     function(error) {
-      estado.innerText = "❌ Error al enviar. Intenta de nuevo.";
+      estado.innerText = "❌ Error al enviar. Intenta nuevamente.";
       console.log(error);
     }
   );
