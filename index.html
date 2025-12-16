@@ -2,17 +2,56 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Derecho de Petición</title>
+<title>Generador de Derecho de Petición</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body { font-family: Arial; background:#f2f2f2; padding:20px }
-.container { max-width:700px; margin:auto; background:#fff; padding:20px; border-radius:8px }
-label { margin-top:15px; display:block; font-weight:bold }
-input, textarea { width:100%; padding:8px; margin-top:5px }
-button { margin-top:20px; padding:12px; width:100%; background:#1976d2; color:white; border:none; border-radius:5px }
-.hidden { display:none }
-.helper { font-size:13px; color:#555 }
+body {
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+  padding: 20px;
+}
+.container {
+  max-width: 720px;
+  margin: auto;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+}
+label {
+  font-weight: bold;
+  display: block;
+  margin-top: 15px;
+}
+input, textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+}
+button {
+  margin-top: 20px;
+  padding: 12px;
+  width: 100%;
+  background: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.hidden {
+  display: none;
+}
+.box {
+  background:#f7f7f7;
+  padding:15px;
+  border-radius:6px;
+  margin-top:15px;
+}
+.helper {
+  font-size:13px;
+  color:#555;
+}
 </style>
 </head>
 
@@ -21,23 +60,29 @@ button { margin-top:20px; padding:12px; width:100%; background:#1976d2; color:wh
 <div class="container">
 <h2>Derecho de Petición</h2>
 
-<form id="formulario">
+<form id="formulario" novalidate>
 
-<!-- PANTALLA 1 -->
+<!-- ================= PANTALLA 1 ================= -->
 <div id="pantalla1">
+
   <label>Nombre completo</label>
-  <input name="nombre" required>
+  <input type="text" name="nombre" required>
 
   <label>Cédula</label>
-  <input name="cedula" required>
+  <input type="text" name="cedula" required>
 
   <label>Ciudad</label>
-  <input name="ciudad">
+  <input type="text" name="ciudad">
 
   <label>Entidad a la que va dirigido</label>
-  <input name="entidad" required>
+  <input type="text" name="entidad" required>
 
-  <label>Describe tu problema</label>
+  <label>
+    Describe tu problema
+    <span class="helper">
+      (Sé muy claro, usa fechas, nombres, números de radicado y explica cómo te afecta)
+    </span>
+  </label>
   <textarea name="caso" rows="6" required></textarea>
 
   <label>Correo electrónico</label>
@@ -46,12 +91,86 @@ button { margin-top:20px; padding:12px; width:100%; background:#1976d2; color:wh
   <button type="button" onclick="irAPago()">Continuar al pago</button>
 </div>
 
-<!-- PANTALLA 2 -->
+<!-- ================= PANTALLA 2 ================= -->
 <div id="pantalla2" class="hidden">
 
-  <p><b>💜 Nequi:</b> 3102201651</p>
-  <p><b>🏦 Bancolombia:</b><br>
-     JUAN JOSE DAZA<br>
-     CC 1014868216<br>
-     Cuenta Ahorros 94469295
+  <h3>Pago del servicio</h3>
+
+  <div class="box">
+    <p><b>💜 Nequi</b></p>
+    <p>Número: <b>3102201651</b></p>
+  </div>
+
+  <div class="box">
+    <p><b>🏦 Bancolombia</b></p>
+    <p>
+      Nombre del titular: <b>JUAN JOSE DAZA</b><br>
+      Cédula: <b>1014868216</b><br>
+      Cuenta de ahorros: <b>94469295901</b>
+    </p>
+  </div>
+
+  <label>Link del comprobante de pago</label>
+  <div class="helper">
+    Sube el comprobante a Google Drive, Dropbox o similar y pega el enlace aquí.
+  </div>
+  <input
+    type="url"
+    name="link_comprobante"
+    placeholder="https://drive.google.com/..."
+    required
+  >
+
+  <button type="submit">Generar documento</button>
+
+  <p id="estado" class="helper"></p>
+</div>
+
+</form>
+</div>
+
+<script>
+function irAPago() {
+  document.getElementById("pantalla1").classList.add("hidden");
+  document.getElementById("pantalla2").classList.remove("hidden");
+}
+
+document.getElementById("formulario").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const estado = document.getElementById("estado");
+  estado.innerText = "⏳ Generando documento...";
+
+  try {
+    const response = await fetch(
+      "https://script.google.com/macros/s/AKfycbyquD7JPY95p21lk-DTDarBF5RhStONNT8F0xSvFiKVjTpYY7OWCVa77byP_8Z0jhTyoQ/exec",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nombre: this.nombre.value,
+          cedula: this.cedula.value,
+          ciudad: this.ciudad.value,
+          entidad: this.entidad.value,
+          caso: this.caso.value,
+          correo: this.correo.value,
+          link_comprobante: this.link_comprobante.value
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    estado.innerText = "✅ Documento generado. Abriendo descarga...";
+    window.open(data.downloadUrl, "_blank");
+
+  } catch (error) {
+    estado.innerText = "❌ Error al generar el documento.";
+    console.error(error);
+  }
+});
+</script>
+
+</body>
+</html>
 
