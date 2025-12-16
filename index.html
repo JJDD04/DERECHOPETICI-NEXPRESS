@@ -2,10 +2,8 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Derecho de Petición – Pago y Comprobante</title>
+<title>Derecho de Petición – Pago y Generación Automática</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
 <style>
 body {
@@ -82,26 +80,16 @@ button {
   <label>
     Describe tu problema
     <span class="helper">
-      (Sé muy descriptivo y directo. Usa fechas, nombres y datos importantes)
+      (Sé descriptivo, usa fechas, nombres y datos importantes)
     </span>
   </label>
 
   <textarea name="caso" rows="6" required
     placeholder="Ejemplo:
-El día 12 de marzo de 2024 presenté una solicitud ante la entidad.
-Hasta la fecha no he recibido respuesta.
-Esto me ha generado afectación económica y preocupación.">
+El 12 de marzo de 2024 presenté una solicitud.
+No he recibido respuesta hasta la fecha.
+Esto me ha generado afectación económica y estrés.">
   </textarea>
-
-  <div class="box helper">
-    <b>Incluye si puedes:</b>
-    <ul>
-      <li>¿Qué ocurrió exactamente?</li>
-      <li>¿Cuándo ocurrió? (fechas)</li>
-      <li>¿Qué respuesta esperabas?</li>
-      <li>¿Cómo te ha afectado esta situación?</li>
-    </ul>
-  </div>
 
   <label>Correo electrónico</label>
   <input type="email" name="correo" required>
@@ -131,7 +119,7 @@ Esto me ha generado afectación económica y preocupación.">
   <label>Link del comprobante de pago</label>
 
   <div class="box helper">
-    📎 Sube el comprobante a Google Drive, Dropbox o similar  
+    Sube el comprobante a Google Drive, Dropbox o similar  
     y pega el enlace aquí.
   </div>
 
@@ -142,7 +130,7 @@ Esto me ha generado afectación económica y preocupación.">
     required
   >
 
-  <button type="submit">Enviar comprobante</button>
+  <button type="submit">Enviar y generar documento</button>
 
   <p id="estado" class="helper"></p>
 </div>
@@ -151,40 +139,39 @@ Esto me ha generado afectación económica y preocupación.">
 </div>
 
 <script>
-emailjs.init("jvc-7-lDgJoYTiYQj");
-
 const estado = document.getElementById("estado");
 
+/* 🔁 CAMBIO DE PANTALLAS */
 function irAPago() {
   document.getElementById("pantalla1").classList.add("hidden");
   document.getElementById("pantalla2").classList.remove("hidden");
 }
 
+/* 🚀 ENVÍO + GENERACIÓN AUTOMÁTICA */
 document.getElementById("formulario").addEventListener("submit", function(e) {
   e.preventDefault();
 
-  const link = this.link_comprobante.value.trim();
+  estado.innerText = "⏳ Estamos validando el pago y generando el documento...";
 
-  if (!link.startsWith("http")) {
-    estado.innerText = "❌ Debes pegar un enlace válido del comprobante.";
-    return;
-  }
-
-  estado.innerText = "⏳ Enviando información...";
-
-  emailjs.sendForm(
-    "service_a16hrta",
-    "template_m8d80fi",
-    this
-  ).then(
-    function() {
-      estado.innerText = "✅ Información enviada correctamente. Estamos validando tu pago.";
-    },
-    function(error) {
-      estado.innerText = "❌ Error al enviar. Intenta nuevamente.";
-      console.error(error);
-    }
-  );
+  fetch("PEGA_AQUI_TU_URL_DE_APPS_SCRIPT", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      nombre: this.nombre.value,
+      cedula: this.cedula.value,
+      ciudad: this.ciudad.value,
+      entidad: this.entidad.value,
+      caso: this.caso.value,
+      correo: this.correo.value,
+      link_comprobante: this.link_comprobante.value
+    })
+  })
+  .then(() => {
+    estado.innerText = "✅ Pago recibido. El Derecho de Petición fue generado automáticamente.";
+  })
+  .catch(() => {
+    estado.innerText = "❌ Ocurrió un error al generar el documento.";
+  });
 });
 </script>
 
