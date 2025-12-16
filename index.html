@@ -58,32 +58,105 @@ button {
 <div class="container">
 <h1>Derecho de Petición</h1>
 
-<form id="formulario">
+<!-- 🔥 novalidate ES CLAVE -->
+<form id="formulario" novalidate>
 
 <!-- ================= PANTALLA 1 ================= -->
 <div id="pantalla1">
 
   <label>Nombre completo</label>
-  <input type="text" name="nombre" required>
+  <input type="text" name="nombre">
 
   <label>Cédula</label>
-  <input type="text" name="cedula" required>
+  <input type="text" name="cedula">
 
   <label>Ciudad</label>
   <input type="text" name="ciudad">
 
   <label>Entidad a la que va dirigido</label>
-  <input type="text" name="entidad" required>
+  <input type="text" name="entidad">
 
-  <label>
-    Describe tu problema
-    <span style="font-size:12px; font-weight:normal; color:#555;">
-      (Sé muy descriptivo y directo. Usa fechas, nombres y datos importantes)
-    </span>
-  </label>
+  <label>Describe tu problema</label>
+  <textarea name="caso" rows="6"></textarea>
 
-  <textarea name="caso" rows="6" required></textarea>
+  <label>Correo electrónico</label>
+  <input type="email" name="correo">
 
-  <label>¿Qué respuesta esperas de la entidad? (opcional)</label>
-  <textarea name="respuesta_esperada" rows="_
+  <button type="button" onclick="irAPago()">Ir a pago</button>
+</div>
 
+<!-- ================= PANTALLA 2 ================= -->
+<div id="pantalla2" class="hidden">
+
+  <h3>Pago del servicio</h3>
+
+  <div class="box">
+    <p><b>💜 Nequi</b></p>
+    <p>Número: <b>3102201651</b></p>
+  </div>
+
+  <div class="box">
+    <p><b>🏦 Bancolombia</b></p>
+    <p>
+      Nombre del titular: <b>JUAN JOSE DAZA</b><br>
+      Cédula: <b>1014868216</b><br>
+      Cuenta de ahorros: <b>944-692959-01</b>
+    </p>
+  </div>
+
+  <label>Comprobante de pago</label>
+
+  <div class="box">
+    <p style="font-size:13px;">
+      📎 Sube el comprobante a Google Drive o similar  
+      y pega el enlace aquí.
+    </p>
+  </div>
+
+  <input
+    type="url"
+    name="link_comprobante"
+    placeholder="https://drive.google.com/..."
+  >
+
+  <button type="submit">Enviar comprobante</button>
+
+  <p id="estado" style="font-size:13px;"></p>
+</div>
+
+</form>
+</div>
+
+<script>
+emailjs.init("jvc-7-lDgJoYTiYQj");
+
+const estado = document.getElementById("estado");
+
+function irAPago() {
+  document.getElementById("pantalla1").classList.add("hidden");
+  document.getElementById("pantalla2").classList.remove("hidden");
+}
+
+document.getElementById("formulario").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  estado.innerText = "⏳ Enviando información...";
+
+  emailjs.sendForm(
+    "service_a16hrta",
+    "template_m8d80fi",
+    this
+  ).then(
+    function() {
+      estado.innerText = "✅ Información enviada correctamente.";
+    },
+    function(error) {
+      estado.innerText = "❌ Error al enviar.";
+      console.error(error);
+    }
+  );
+});
+</script>
+
+</body>
+</html>
