@@ -5,7 +5,6 @@
 <title>Derecho de Petición – Envío de comprobante</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- EmailJS -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
 <style>
@@ -98,10 +97,33 @@ button {
 </div>
 
 <script>
-/* 🔴 PEGA AQUÍ TU PUBLIC KEY */
-emailjs.init("TU_PUBLIC_KEY");
+/* 🔴 CAMBIA SOLO ESTAS 3 LÍNEAS POR LAS TUYAS */
+emailjs.init("PUBLIC_KEY_AQUI");
 
 function irAPago() {
   document.getElementById("pantalla1").classList.add("hidden");
-  do
+  document.getElementById("pantalla2").classList.remove("hidden");
+}
 
+document.getElementById("formulario").addEventListener("submit", function(e) {
+  e.preventDefault();
+  estado.innerText = "Enviando comprobante...";
+
+  emailjs.sendForm(
+    "SERVICE_ID_AQUI",
+    "TEMPLATE_ID_AQUI",
+    this
+  ).then(
+    function() {
+      estado.innerText = "✅ Comprobante enviado correctamente. Te contactaremos pronto.";
+    },
+    function(error) {
+      estado.innerText = "❌ Error al enviar. Intenta de nuevo.";
+      console.log(error);
+    }
+  );
+});
+</script>
+
+</body>
+</html>
