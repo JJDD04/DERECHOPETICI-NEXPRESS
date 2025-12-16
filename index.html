@@ -140,7 +140,9 @@ Esta situación me ha generado estrés, incertidumbre y preocupación.">
   </div>
 
   <label>Sube el comprobante de pago</label>
-  <input type="file" name="comprobante" accept=".jpg,.png,.pdf" required>
+  <<input type="file" name="comprobante" accept=".jpg,.png,.pdf" required
+onchange="validarArchivo(this)">
+>
 
   <button type="submit">Enviar comprobante</button>
 
@@ -176,6 +178,18 @@ document.getElementById("formulario").addEventListener("submit", function(e) {
       console.log(error);
     }
   );
+  function validarArchivo(input) {
+  const archivo = input.files[0];
+  if (!archivo) return;
+
+  const maxSize = 2 * 1024 * 1024; // 2 MB
+
+  if (archivo.size > maxSize) {
+    alert("❌ El archivo es muy grande. Máximo permitido: 2 MB. Usa una foto comprimida o un PDF ligero.");
+    input.value = "";
+  }
+}
+
 });
 </script>
 
