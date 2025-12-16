@@ -2,47 +2,17 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Generador de Derecho de Petición</title>
+<title>Derecho de Petición</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f2f2f2;
-  padding: 20px;
-}
-.container {
-  max-width: 700px;
-  margin: auto;
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 8px;
-}
-label {
-  display: block;
-  margin-top: 15px;
-  font-weight: bold;
-}
-input, textarea {
-  width: 100%;
-  padding: 8px;
-  margin-top: 5px;
-}
-button {
-  margin-top: 20px;
-  padding: 12px;
-  width: 100%;
-  background: #1976d2;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-}
-.helper {
-  font-size: 13px;
-  color: #555;
-}
+body { font-family: Arial; background:#f2f2f2; padding:20px }
+.container { max-width:700px; margin:auto; background:#fff; padding:20px; border-radius:8px }
+label { margin-top:15px; display:block; font-weight:bold }
+input, textarea { width:100%; padding:8px; margin-top:5px }
+button { margin-top:20px; padding:12px; width:100%; background:#1976d2; color:white; border:none; border-radius:5px }
+.hidden { display:none }
+.helper { font-size:13px; color:#555 }
 </style>
 </head>
 
@@ -51,91 +21,37 @@ button {
 <div class="container">
 <h2>Derecho de Petición</h2>
 
-<form id="formulario" novalidate>
+<form id="formulario">
 
-<label>Nombre completo</label>
-<input name="nombre" required>
+<!-- PANTALLA 1 -->
+<div id="pantalla1">
+  <label>Nombre completo</label>
+  <input name="nombre" required>
 
-<label>Cédula</label>
-<input name="cedula" required>
+  <label>Cédula</label>
+  <input name="cedula" required>
 
-<label>Ciudad</label>
-<input name="ciudad">
+  <label>Ciudad</label>
+  <input name="ciudad">
 
-<label>Entidad a la que va dirigido</label>
-<input name="entidad" required>
+  <label>Entidad a la que va dirigido</label>
+  <input name="entidad" required>
 
-<label>
-Describe tu problema
-<span class="helper">
-(Sé claro, usa fechas, nombres y datos importantes)
-</span>
-</label>
-<textarea name="caso" rows="6" required></textarea>
+  <label>Describe tu problema</label>
+  <textarea name="caso" rows="6" required></textarea>
 
-<label>Correo electrónico</label>
-<input type="email" name="correo" required>
+  <label>Correo electrónico</label>
+  <input type="email" name="correo" required>
 
-<label>Link del comprobante de pago</label>
-<input
-  type="url"
-  name="link_comprobante"
-  placeholder="https://drive.google.com/..."
-  required
->
-
-<button type="submit">Generar documento</button>
-
-<p id="estado" class="helper"></p>
-
-</form>
+  <button type="button" onclick="irAPago()">Continuar al pago</button>
 </div>
 
-<script>
-document.getElementById("formulario").addEventListener("submit", async function(e) {
-  e.preventDefault();
+<!-- PANTALLA 2 -->
+<div id="pantalla2" class="hidden">
 
-  const estado = document.getElementById("estado");
-  estado.innerText = "⏳ Generando documento...";
-
-  try {
-    const response = await fetch(
-      "https://script.google.com/macros/s/AKfycbw4KZe9iZ4un20Me2njIw8t_s5cnTK4xNqPzqfZYxst6WDtETojFNkfuzHUfSvXyK4Jrw/exec",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nombre: this.nombre.value,
-          cedula: this.cedula.value,
-          ciudad: this.ciudad.value,
-          entidad: this.entidad.value,
-          caso: this.caso.value,
-          correo: this.correo.value,
-          link_comprobante: this.link_comprobante.value
-        })
-      }
-    );
-
-    if (!response.ok) throw new Error("Error en el servidor");
-
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "Derecho_de_Peticion.docx";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-
-    estado.innerText = "✅ Documento generado y descargado correctamente.";
-  } catch (error) {
-    estado.innerText = "❌ Error al generar el documento.";
-    console.error(error);
-  }
-});
-</script>
-
-</body>
-</html>
+  <p><b>💜 Nequi:</b> 3102201651</p>
+  <p><b>🏦 Bancolombia:</b><br>
+     JUAN JOSE DAZA<br>
+     CC 1014868216<br>
+     Cuenta Ahorros 94469295
 
