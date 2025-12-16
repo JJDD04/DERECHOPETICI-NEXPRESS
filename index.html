@@ -98,7 +98,7 @@ button {
 
 <script>
 /* 🔴 CAMBIA SOLO ESTAS 3 LÍNEAS POR LAS TUYAS */
-emailjs.init("PUBLIC_KEY_AQUI");
+emailjs.init("jvc-7-lDgJoYTiYQj");
 
 function irAPago() {
   document.getElementById("pantalla1").classList.add("hidden");
@@ -110,8 +110,8 @@ document.getElementById("formulario").addEventListener("submit", function(e) {
   estado.innerText = "Enviando comprobante...";
 
   emailjs.sendForm(
-    "SERVICE_ID_AQUI",
-    "TEMPLATE_ID_AQUI",
+    "service_a16hrta",
+    "template_m8d80fi",
     this
   ).then(
     function() {
