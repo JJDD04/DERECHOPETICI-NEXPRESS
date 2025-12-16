@@ -82,41 +82,20 @@ button {
     </span>
   </label>
 
-  <textarea name="caso" rows="6" required
-    placeholder="Ejemplo:
-El día 12 de marzo de 2024 presenté una solicitud ante la entidad.
-Hasta la fecha no he recibido respuesta.
-Esta situación me ha generado preocupación y afectación económica.">
-  </textarea>
-
-  <div class="box">
-    <p style="font-size:14px; margin-bottom:5px;"><b>Para ayudarte, puedes responder:</b></p>
-    <ul style="font-size:13px; padding-left:18px;">
-      <li>¿Qué pasó exactamente?</li>
-      <li>¿Cuándo ocurrió? (fechas)</li>
-      <li>¿Quiénes están involucrados?</li>
-      <li>¿Qué has hecho para solucionarlo?</li>
-      <li>¿Cómo te ha afectado esta situación?</li>
-    </ul>
-  </div>
+  <textarea name="caso" rows="6" required></textarea>
 
   <label>¿Qué respuesta esperas de la entidad? (opcional)</label>
-  <textarea name="respuesta_esperada" rows="3"
-    placeholder="Ejemplo:
-Que se me entregue una respuesta clara por escrito y se resuelva mi solicitud.">
-  </textarea>
+  <textarea name="respuesta_esperada" rows="3"></textarea>
 
   <label>¿Cómo te ha hecho sentir esta situación? (opcional)</label>
-  <textarea name="impacto_emocional" rows="3"
-    placeholder="Ejemplo:
-Esta situación me ha generado estrés, incertidumbre y preocupación.">
-  </textarea>
+  <textarea name="impacto_emocional" rows="3"></textarea>
 
   <label>Correo electrónico</label>
   <input type="email" name="correo" required>
 
   <button type="button" onclick="irAPago()">Continuar al pago</button>
 </div>
+
 <!-- ================= PANTALLA 2 ================= -->
 <div id="pantalla2" class="hidden">
 
@@ -136,14 +115,24 @@ Esta situación me ha generado estrés, incertidumbre y preocupación.">
     </p>
   </div>
 
-  <!-- ✅ INPUT FILE CORRECTO -->
-  <label>Sube el comprobante de pago</label>
+  <!-- ✅ SECCIÓN DE COMPROBANTE (MODIFICADA) -->
+  <label>Comprobante de pago</label>
+
+  <div class="box">
+    <p style="font-size:13px;">
+      📎 Sube el comprobante a Google Drive, Dropbox u otra nube  
+      y pega el enlace aquí.
+    </p>
+    <p style="font-size:12px;color:#666;">
+      El enlace debe tener acceso para ver.
+    </p>
+  </div>
+
   <input
-    type="file"
-    name="comprobante"
-    accept=".jpg,.png,.pdf"
+    type="url"
+    name="link_comprobante"
     required
-    onchange="validarArchivo(this)"
+    placeholder="https://drive.google.com/..."
   >
 
   <button type="submit">Enviar comprobante</button>
@@ -155,35 +144,19 @@ Esta situación me ha generado estrés, incertidumbre y preocupación.">
 </div>
 
 <script>
-/* 🔐 EMAILJS */
 emailjs.init("jvc-7-lDgJoYTiYQj");
 
 const estado = document.getElementById("estado");
 
-/* Cambiar de pantalla */
 function irAPago() {
   document.getElementById("pantalla1").classList.add("hidden");
   document.getElementById("pantalla2").classList.remove("hidden");
 }
 
-/* ✅ VALIDACIÓN DEL ARCHIVO */
-function validarArchivo(input) {
-  const archivo = input.files[0];
-  if (!archivo) return;
-
-  const maxSize = 2 * 1024 * 1024; // 2 MB
-
-  if (archivo.size > maxSize) {
-    alert("❌ El archivo es muy grande. Máximo permitido: 2 MB.");
-    input.value = "";
-  }
-}
-
-/* Envío del formulario */
 document.getElementById("formulario").addEventListener("submit", function(e) {
   e.preventDefault();
 
-  estado.innerText = "⏳ Enviando comprobante...";
+  estado.innerText = "⏳ Enviando información...";
 
   emailjs.sendForm(
     "service_a16hrta",
@@ -191,7 +164,7 @@ document.getElementById("formulario").addEventListener("submit", function(e) {
     this
   ).then(
     function() {
-      estado.innerText = "✅ Comprobante enviado correctamente. Estamos validando tu pago.";
+      estado.innerText = "✅ Información enviada correctamente. Estamos validando tu pago.";
     },
     function(error) {
       estado.innerText = "❌ Error al enviar. Intenta nuevamente.";
