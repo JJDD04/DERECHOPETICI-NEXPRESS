@@ -50,6 +50,10 @@ button {
   border-radius:6px;
   margin-top:10px;
 }
+.helper {
+  font-size:13px;
+  color:#555;
+}
 </style>
 </head>
 
@@ -58,31 +62,51 @@ button {
 <div class="container">
 <h1>Derecho de Petición</h1>
 
-<!-- 🔥 novalidate ES CLAVE -->
 <form id="formulario" novalidate>
 
 <!-- ================= PANTALLA 1 ================= -->
 <div id="pantalla1">
 
   <label>Nombre completo</label>
-  <input type="text" name="nombre">
+  <input type="text" name="nombre" required>
 
   <label>Cédula</label>
-  <input type="text" name="cedula">
+  <input type="text" name="cedula" required>
 
   <label>Ciudad</label>
   <input type="text" name="ciudad">
 
   <label>Entidad a la que va dirigido</label>
-  <input type="text" name="entidad">
+  <input type="text" name="entidad" required>
 
-  <label>Describe tu problema</label>
-  <textarea name="caso" rows="6"></textarea>
+  <label>
+    Describe tu problema
+    <span class="helper">
+      (Sé muy descriptivo y directo. Usa fechas, nombres y datos importantes)
+    </span>
+  </label>
+
+  <textarea name="caso" rows="6" required
+    placeholder="Ejemplo:
+El día 12 de marzo de 2024 presenté una solicitud ante la entidad.
+Hasta la fecha no he recibido respuesta.
+Esto me ha generado afectación económica y preocupación.">
+  </textarea>
+
+  <div class="box helper">
+    <b>Incluye si puedes:</b>
+    <ul>
+      <li>¿Qué ocurrió exactamente?</li>
+      <li>¿Cuándo ocurrió? (fechas)</li>
+      <li>¿Qué respuesta esperabas?</li>
+      <li>¿Cómo te ha afectado esta situación?</li>
+    </ul>
+  </div>
 
   <label>Correo electrónico</label>
-  <input type="email" name="correo">
+  <input type="email" name="correo" required>
 
-  <button type="button" onclick="irAPago()">Ir a pago</button>
+  <button type="button" onclick="irAPago()">Continuar al pago</button>
 </div>
 
 <!-- ================= PANTALLA 2 ================= -->
@@ -104,24 +128,23 @@ button {
     </p>
   </div>
 
-  <label>Comprobante de pago</label>
+  <label>Link del comprobante de pago</label>
 
-  <div class="box">
-    <p style="font-size:13px;">
-      📎 Sube el comprobante a Google Drive o similar  
-      y pega el enlace aquí.
-    </p>
+  <div class="box helper">
+    📎 Sube el comprobante a Google Drive, Dropbox o similar  
+    y pega el enlace aquí.
   </div>
 
   <input
     type="url"
     name="link_comprobante"
     placeholder="https://drive.google.com/..."
+    required
   >
 
   <button type="submit">Enviar comprobante</button>
 
-  <p id="estado" style="font-size:13px;"></p>
+  <p id="estado" class="helper"></p>
 </div>
 
 </form>
@@ -140,6 +163,13 @@ function irAPago() {
 document.getElementById("formulario").addEventListener("submit", function(e) {
   e.preventDefault();
 
+  const link = this.link_comprobante.value.trim();
+
+  if (!link.startsWith("http")) {
+    estado.innerText = "❌ Debes pegar un enlace válido del comprobante.";
+    return;
+  }
+
   estado.innerText = "⏳ Enviando información...";
 
   emailjs.sendForm(
@@ -148,10 +178,10 @@ document.getElementById("formulario").addEventListener("submit", function(e) {
     this
   ).then(
     function() {
-      estado.innerText = "✅ Información enviada correctamente.";
+      estado.innerText = "✅ Información enviada correctamente. Estamos validando tu pago.";
     },
     function(error) {
-      estado.innerText = "❌ Error al enviar.";
+      estado.innerText = "❌ Error al enviar. Intenta nuevamente.";
       console.error(error);
     }
   );
@@ -160,3 +190,4 @@ document.getElementById("formulario").addEventListener("submit", function(e) {
 
 </body>
 </html>
+
