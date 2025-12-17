@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -116,7 +116,8 @@ button {
 <script>
 emailjs.init("jvc-7-lDgJoYTiYQj");
 
-const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbyquD7JPY95p21lk-DTDarBF5RhStONNT8F0xSvFiKVjTpYY7OWCVa77byP_8Z0jhTyoQ/exec";
+const URL_SCRIPT =
+"https://script.google.com/macros/s/AKfycbwfxnYbxFntDUFzO6-2CtzAqFhpAQsp6p4N_vj-oyXmnBSQjNggZOXisbqpUi3dWVk9/exec";
 
 function irAPago() {
   document.getElementById("pantalla1").classList.add("hidden");
@@ -143,23 +144,23 @@ document.getElementById("formulario").addEventListener("submit", async function(
 
     try {
       data = JSON.parse(texto);
-    } catch (e) {
+    } catch {
       console.error("Respuesta no JSON:", texto);
-      estado.innerText = "❌ Error del servidor (respuesta inválida)";
+      estado.innerText = "❌ Error del servidor";
       return;
     }
 
     if (!data.ok || !data.url) {
-      console.error("Error Apps Script:", data);
       estado.innerText = "❌ No se pudo generar el documento";
       return;
     }
 
-    // ✅ DOCUMENTO SE GENERA SIEMPRE
+    // ✅ DOCUMENTO
     window.open(data.url, "_blank");
+
     estado.innerText = "✅ Documento generado. Enviando correo...";
 
-    // 📧 EmailJS NO BLOQUEANTE
+    // 📧 CORREO (NO BLOQUEANTE)
     emailjs.send("service_a16hrta", "template_m8d80fi", {
       nombre: formData.get("nombre"),
       cedula: formData.get("cedula"),
@@ -176,11 +177,12 @@ document.getElementById("formulario").addEventListener("submit", async function(
 
   } catch (error) {
     console.error("FETCH ERROR:", error);
-    estado.innerText = "❌ Error de conexión con el servidor";
+    estado.innerText = "❌ Error de conexión";
   }
 });
 </script>
 
-
 </body>
 </html>
+
+
