@@ -10,43 +10,81 @@
 <style>
 body {
   font-family: Arial, sans-serif;
-  background: #f2f2f2;
+  background: linear-gradient(135deg, #e3f2fd, #f5f5f5);
   padding: 20px;
 }
+
 .container {
-  max-width: 720px;
+  max-width: 760px;
   margin: auto;
   background: #ffffff;
-  padding: 20px;
-  border-radius: 8px;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
+
+h1 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.section-title {
+  margin-top: 30px;
+  font-size: 18px;
+  color: #1976d2;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 5px;
+}
+
 label {
   font-weight: bold;
   display: block;
   margin-top: 15px;
 }
+
+small {
+  font-weight: normal;
+  color: #666;
+}
+
 input, textarea {
   width: 100%;
-  padding: 8px;
-  margin-top: 5px;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
 }
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: #1976d2;
+}
+
 button {
-  margin-top: 20px;
-  padding: 12px;
+  margin-top: 25px;
+  padding: 14px;
   width: 100%;
   background: #1976d2;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   font-size: 16px;
   cursor: pointer;
 }
+
+button:hover {
+  background: #125aa3;
+}
+
 .hidden { display:none; }
+
 .box {
   background:#f7f7f7;
   padding:15px;
-  border-radius:6px;
-  margin-top:10px;
+  border-radius:8px;
+  margin-top:15px;
+  font-size: 14px;
 }
 </style>
 </head>
@@ -55,39 +93,58 @@ button {
 
 <div class="container">
 <h1>Derecho de Petición</h1>
+<p style="text-align:center; color:#555;">
+Completa la información con cuidado. Entre más claro seas, mejor será el documento.
+</p>
 
 <form id="formulario" novalidate>
 
 <!-- ================= PANTALLA 1 ================= -->
 <div id="pantalla1">
+
+  <div class="section-title">Datos del solicitante</div>
+
   <label>Nombre completo</label>
   <input type="text" name="nombre" required>
 
   <label>Cédula</label>
   <input type="text" name="cedula" required>
 
-  <label>Ciudad</label>
+  <label>Ciudad de residencia</label>
   <input type="text" name="ciudad" required>
-
-  <label>Entidad a la que va dirigido</label>
-  <input type="text" name="entidad" required>
-
-  <label>
-    Describe tu problema  
-    <small>(Sé claro, usa fechas, nombres y datos importantes)</small>
-  </label>
-  <textarea name="caso" rows="6" required></textarea>
 
   <label>Correo electrónico</label>
   <input type="email" name="correo" required>
 
-  <button type="button" onclick="irAPago()">Ir a pago</button>
+  <div class="section-title">Entidad o empresa a la que se dirige</div>
+
+  <label>Nombre de la empresa o entidad</label>
+  <input type="text" name="entidad" required>
+
+  <label>NIT o RUT de la empresa <small>(si lo conoces)</small></label>
+  <input type="text" name="nit_empresa">
+
+  <label>Ciudad de la empresa <small>(opcional)</small></label>
+  <input type="text" name="ciudad_empresa">
+
+  <div class="section-title">Descripción del caso</div>
+
+  <label>
+    Describe tu problema
+    <small>
+      Sé directo y específico. Incluye fechas, números de contrato, radicados,
+      nombres de funcionarios y qué respuesta esperas.
+    </small>
+  </label>
+  <textarea name="caso" rows="7" required></textarea>
+
+  <button type="button" onclick="irAPago()">Continuar al pago</button>
 </div>
 
 <!-- ================= PANTALLA 2 ================= -->
 <div id="pantalla2" class="hidden">
 
-  <h3>Pago del servicio</h3>
+  <div class="section-title">Pago del servicio</div>
 
   <div class="box">
     <b>💜 Nequi</b><br>
@@ -98,16 +155,21 @@ button {
     <b>🏦 Bancolombia</b><br>
     Nombre: JUAN JOSE DAZA<br>
     Cédula: 1014868216<br>
-    Cuenta: 944-692959-01
+    Cuenta de ahorros: 944-692959-01
   </div>
 
-  <label>Link del comprobante de pago</label>
+  <label>
+    Link del comprobante de pago
+    <small>
+      Sube el comprobante a Google Drive, OneDrive o similar y pega el enlace aquí.
+    </small>
+  </label>
   <input type="url" name="link_comprobante" required
          placeholder="https://drive.google.com/...">
 
-  <button type="submit">Generar documento</button>
+  <button type="submit">Generar derecho de petición</button>
 
-  <p id="estado"></p>
+  <p id="estado" style="margin-top:15px;"></p>
 </div>
 
 </form>
@@ -140,43 +202,21 @@ document.getElementById("formulario").addEventListener("submit", async function(
     });
 
     const texto = await response.text();
-    let data;
-
-    try {
-      data = JSON.parse(texto);
-    } catch {
-      console.error("Respuesta no JSON:", texto);
-      estado.innerText = "❌ Error del servidor";
-      return;
-    }
+    const data = JSON.parse(texto);
 
     if (!data.ok || !data.url) {
       estado.innerText = "❌ No se pudo generar el documento";
       return;
     }
 
-    // ✅ DOCUMENTO
     window.open(data.url, "_blank");
 
-    estado.innerText = "✅ Documento generado. Enviando correo...";
+    emailjs.send("service_a16hrta", "template_m8d80fi", Object.fromEntries(formData))
+      .finally(() => {
+        estado.innerText = "✅ Documento generado correctamente.";
+      });
 
-    // 📧 CORREO (NO BLOQUEANTE)
-    emailjs.send("service_a16hrta", "template_m8d80fi", {
-      nombre: formData.get("nombre"),
-      cedula: formData.get("cedula"),
-      ciudad: formData.get("ciudad"),
-      entidad: formData.get("entidad"),
-      caso: formData.get("caso"),
-      correo: formData.get("correo"),
-      link_comprobante: formData.get("link_comprobante"),
-      link_documento: data.url
-    }).then(
-      () => estado.innerText = "✅ Documento generado y correo enviado.",
-      () => estado.innerText = "⚠️ Documento generado. El correo no pudo enviarse."
-    );
-
-  } catch (error) {
-    console.error("FETCH ERROR:", error);
+  } catch {
     estado.innerText = "❌ Error de conexión";
   }
 });
@@ -184,5 +224,4 @@ document.getElementById("formulario").addEventListener("submit", async function(
 
 </body>
 </html>
-
 
