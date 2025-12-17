@@ -2,57 +2,51 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Generador de Derecho de Petición</title>
+<title>Derecho de Petición</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
 <style>
-body{
+body {
   font-family: Arial, sans-serif;
-  background:#f2f2f2;
-  padding:20px;
+  background: #f2f2f2;
+  padding: 20px;
 }
-.container{
-  max-width:720px;
-  margin:auto;
-  background:#fff;
-  padding:20px;
-  border-radius:8px;
+.container {
+  max-width: 720px;
+  margin: auto;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
 }
-label{
-  font-weight:bold;
-  display:block;
-  margin-top:15px;
+label {
+  font-weight: bold;
+  display: block;
+  margin-top: 15px;
 }
-input, textarea{
-  width:100%;
-  padding:8px;
-  margin-top:5px;
+input, textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
 }
-button{
-  margin-top:20px;
-  width:100%;
-  padding:12px;
-  background:#1976d2;
-  color:#fff;
-  border:none;
-  border-radius:5px;
-  font-size:16px;
-  cursor:pointer;
+button {
+  margin-top: 20px;
+  padding: 12px;
+  width: 100%;
+  background: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
 }
-.hidden{display:none;}
-.box{
+.hidden { display:none; }
+.box {
   background:#f7f7f7;
   padding:15px;
   border-radius:6px;
   margin-top:10px;
-}
-.note{
-  font-size:13px;
-  color:#555;
-}
-#estado{
-  margin-top:15px;
-  font-size:14px;
 }
 </style>
 </head>
@@ -60,13 +54,12 @@ button{
 <body>
 
 <div class="container">
-<h2>Derecho de Petición</h2>
+<h1>Derecho de Petición</h1>
 
 <form id="formulario" novalidate>
 
-<!-- =================== PANTALLA 1 =================== -->
+<!-- ================= PANTALLA 1 ================= -->
 <div id="pantalla1">
-
   <label>Nombre completo</label>
   <input type="text" name="nombre" required>
 
@@ -79,45 +72,38 @@ button{
   <label>Entidad a la que va dirigido</label>
   <input type="text" name="entidad" required>
 
-  <label>Describe tu problema</label>
-  <textarea name="caso" rows="7" required></textarea>
-  <p class="note">
-    Sé claro y directo. Usa fechas, nombres, números de radicado,
-    cómo te afecta la situación y qué solicitas exactamente.
-  </p>
+  <label>
+    Describe tu problema  
+    <small>(Sé claro, usa fechas, nombres y datos importantes)</small>
+  </label>
+  <textarea name="caso" rows="6" required></textarea>
 
   <label>Correo electrónico</label>
   <input type="email" name="correo" required>
 
-  <button type="button" onclick="irAPago()">Continuar al pago</button>
+  <button type="button" onclick="irAPago()">Ir a pago</button>
 </div>
 
-<!-- =================== PANTALLA 2 =================== -->
+<!-- ================= PANTALLA 2 ================= -->
 <div id="pantalla2" class="hidden">
 
   <h3>Pago del servicio</h3>
 
   <div class="box">
-    <p><b>💜 Nequi</b></p>
-    <p>Número: <b>310 220 1651</b></p>
+    <b>💜 Nequi</b><br>
+    3102201651
   </div>
 
   <div class="box">
-    <p><b>🏦 Bancolombia</b></p>
-    <p>
-      Titular: <b>JUAN JOSÉ DAZA</b><br>
-      Cédula: <b>1014868216</b><br>
-      Cuenta de ahorros: <b>944-692959-01</b>
-    </p>
+    <b>🏦 Bancolombia</b><br>
+    Nombre: JUAN JOSE DAZA<br>
+    Cédula: 1014868216<br>
+    Cuenta: 944-692959-01
   </div>
 
   <label>Link del comprobante de pago</label>
-  <input
-    type="url"
-    name="link_comprobante"
-    placeholder="https://drive.google.com/..."
-    required
-  >
+  <input type="url" name="link_comprobante" required
+         placeholder="https://drive.google.com/...">
 
   <button type="submit">Generar documento</button>
 
@@ -128,44 +114,58 @@ button{
 </div>
 
 <script>
-const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzZPTlBeJ6SUiAGsJ9p3TQtAcFa2J7todNuU-8nl8hQV_5kZYDSBXt17SkzMCNhF_3I_g/exec";
+emailjs.init("jvc-7-lDgJoYTiYQj");
 
-function irAPago(){
+const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbyquD7JPY95p21lk-DTDarBF5RhStONNT8F0xSvFiKVjTpYY7OWCVa77byP_8Z0jhTyoQ/exec";
+
+function irAPago() {
   document.getElementById("pantalla1").classList.add("hidden");
   document.getElementById("pantalla2").classList.remove("hidden");
 }
 
-document.getElementById("formulario").addEventListener("submit", function(e){
+document.getElementById("formulario").addEventListener("submit", async function(e) {
   e.preventDefault();
 
   const estado = document.getElementById("estado");
-  estado.innerText = "⏳ Validando pago y generando documento...";
+  estado.innerText = "⏳ Generando documento...";
 
-  const datos = new FormData(this);
+  const formData = new FormData(this);
 
-  fetch(URL_SCRIPT, {
-    method: "POST",
-    body: datos
-  })
-  .then(res => res.json())
-  .then(data => {
-    if(data.ok){
-      estado.innerHTML = `
-        ✅ Documento generado correctamente.<br><br>
-        <a href="${data.url}" target="_blank">
-          📄 Descargar Derecho de Petición
-        </a>
-      `;
-    } else {
-      estado.innerText = "❌ Error al generar el documento.";
-    }
-  })
-  .catch(err => {
-    console.error(err);
-    estado.innerText = "❌ Error de conexión.";
-  });
+  try {
+    // 1️⃣ Generar documento
+    const response = await fetch(URL_SCRIPT, {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (!data.ok) throw new Error("No se pudo crear el documento");
+
+    // 2️⃣ Enviar correo con EmailJS
+    await emailjs.send("service_a16hrta", "template_m8d80fi", {
+      nombre: formData.get("nombre"),
+      cedula: formData.get("cedula"),
+      ciudad: formData.get("ciudad"),
+      entidad: formData.get("entidad"),
+      caso: formData.get("caso"),
+      correo: formData.get("correo"),
+      link_comprobante: formData.get("link_comprobante"),
+      link_documento: data.url
+    });
+
+    // 3️⃣ Descargar documento
+    window.open(data.url, "_blank");
+
+    estado.innerText = "✅ Documento generado y pago enviado correctamente.";
+
+  } catch (error) {
+    console.error(error);
+    estado.innerText = "❌ Error. Intenta nuevamente.";
+  }
 });
 </script>
 
 </body>
 </html>
+
