@@ -114,7 +114,6 @@ button {
 </div>
 
 <script>
-<script>
 emailjs.init("jvc-7-lDgJoYTiYQj");
 
 const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbyquD7JPY95p21lk-DTDarBF5RhStONNT8F0xSvFiKVjTpYY7OWCVa77byP_8Z0jhTyoQ/exec";
@@ -133,25 +132,34 @@ document.getElementById("formulario").addEventListener("submit", async function(
   const formData = new FormData(this);
 
   try {
-    // 1️⃣ Generar documento (ESTO ES LO CRÍTICO)
     const response = await fetch(URL_SCRIPT, {
       method: "POST",
-      body: formData
+      body: formData,
+      redirect: "follow"
     });
 
-    const data = await response.json();
+    const texto = await response.text();
+    let data;
 
-    if (!data.ok) {
-      estado.innerText = "❌ Error al generar el documento.";
+    try {
+      data = JSON.parse(texto);
+    } catch (e) {
+      console.error("Respuesta no JSON:", texto);
+      estado.innerText = "❌ Error del servidor (respuesta inválida)";
       return;
     }
 
-    // 2️⃣ Abrir documento SIEMPRE
-    window.open(data.url, "_blank");
+    if (!data.ok || !data.url) {
+      console.error("Error Apps Script:", data);
+      estado.innerText = "❌ No se pudo generar el documento";
+      return;
+    }
 
+    // ✅ DOCUMENTO SE GENERA SIEMPRE
+    window.open(data.url, "_blank");
     estado.innerText = "✅ Documento generado. Enviando correo...";
 
-    // 3️⃣ Enviar correo (NO bloqueante)
+    // 📧 EmailJS NO BLOQUEANTE
     emailjs.send("service_a16hrta", "template_m8d80fi", {
       nombre: formData.get("nombre"),
       cedula: formData.get("cedula"),
@@ -162,23 +170,17 @@ document.getElementById("formulario").addEventListener("submit", async function(
       link_comprobante: formData.get("link_comprobante"),
       link_documento: data.url
     }).then(
-      () => {
-        estado.innerText = "✅ Documento generado y correo enviado.";
-      },
-      (error) => {
-        console.warn("EmailJS falló:", error);
-        estado.innerText = "⚠️ Documento generado. El correo no pudo enviarse.";
-      }
+      () => estado.innerText = "✅ Documento generado y correo enviado.",
+      () => estado.innerText = "⚠️ Documento generado. El correo no pudo enviarse."
     );
 
   } catch (error) {
-    console.error(error);
-    estado.innerText = "❌ Error de conexión.";
+    console.error("FETCH ERROR:", error);
+    estado.innerText = "❌ Error de conexión con el servidor";
   }
 });
 </script>
 
-</script>
 
 </body>
 </html>
